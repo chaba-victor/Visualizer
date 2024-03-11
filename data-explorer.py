@@ -17,10 +17,10 @@ NUMERIC_TYPES = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
 FLOAT_NUMERICS = ['float16', 'float32', 'float64']
 INT_NUMERICS = ['int16', 'int32', 'int64']
 DATE_TYPES = ['datetime64[ns]']
-CHART_TYPES = ['Bar', 'Box', 'Histogram', 'Line', 'Linear Regression', 'Scatter']
-#MAP_TYPES = ['USA-states', 'USA-Counties']
+CHART_TYPES = ['Bar', 'Box', 'Histogram', 'Line', 'Linear Regression', 'Map', 'Scatter']
+MAP_TYPES = ['USA-states', 'USA-Counties']
 CHART_ERR_MESS = '### Unable to create chart. Edit input data'
-#CHARTS_WITHOUT_COLOR = ['Map']
+CHARTS_WITHOUT_COLOR = ['Map']
 COLOR_SCALE_OPTIONS = ['agsunset', 'bluered', 'blues', 'cividis', 'darkmint', 'emrld', 'earth', 
                        'greens', 'ice', 'inferno', 'jet', 'magma', 'magenta', 'tropic', 'viridis']
 PLOT_STYLES = ['ggplot2', 'seaborn', 'simple_white', 'plotly',
@@ -264,7 +264,37 @@ def create_user_defined_chart(n_index, def_x_idx, def_y_idx, def_color_idx, colo
         except:
             st.write(CHART_ERR_MESS)
             return None
-   
+    if chosen_chart == 'Map':
+        st.markdown('''### For maps, choose which location mode we will use.''')
+        st.write('''- for states, use 'USA-states' [must have state code in dataframe. Ex) Arizona = AZ]''')
+        st.write('''- for counties, choose 'USA-counties' [must have FIPS County Code mapped to each location:''')
+        st.write('''- https://en.wikipedia.org/wiki/FIPS_county_code]''')
+         
+        chosen_map_type = st.selectbox('Map Type', MAP_TYPES)
+        try:
+            final_filterd[chosen_X] = final_filterd[chosen_X].astype(str)
+            if chosen_map_type == 'USA-states':
+                fig = px.choropleth(final_filterd, locations=chosen_X, color=chosen_Y,
+                        color_continuous_scale='Viridis',
+                        scope='usa',
+                        locationmode = chosen_map_type,
+                        title=chart_title,
+                        template=chosen_template
+                        )    
+
+            elif chosen_map_type == 'USA-Counties':
+                with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
+                    counties = json.load(response)
+                fig = px.choropleth(final_filterd, geojson=counties, locations=chosen_X, color=chosen_Y,
+                        color_continuous_scale='Viridis',
+                        scope='usa',
+                        title=chart_title,
+                        template=chosen_template
+                        )                
+            return fig, chart_title
+        except:
+            st.write(CHART_ERR_MESS)
+            return None
 
         
 # -----------------------------------------------------------------------------------------
