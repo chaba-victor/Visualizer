@@ -1,13 +1,16 @@
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-import plotly.express as px
-import plotly.io as pio
-from urllib.request import urlopen
-import json
-from datetime import date
 import io
+import json
 import openpyxl
+import pandas as pd
+import streamlit as st
+import plotly.io as pio
+from datetime import date
+import plotly.express as px
+import matplotlib.pyplot as plt
+from urllib.request import urlopen
+
+
+
 
 # set global variables
 KEYLIST = list(range(1, 30))
@@ -28,20 +31,17 @@ PLOT_STYLES = ['ggplot2', 'seaborn', 'simple_white', 'plotly',
 GRID_OPTIONS = ['xgridoff', 'ygridoff']
 
 
-# -----------------------------------------------------------------------------------------
+
 # CONFIG
-# -----------------------------------------------------------------------------------------
 
 st.set_page_config(
-     page_title="Data-Explorer",
+     page_title="Data-Rover",
      page_icon='✅',
      layout="wide",
      initial_sidebar_state="expanded",
  )
 
-# -----------------------------------------------------------------------------------------
 # FUNCTIONS
-# -----------------------------------------------------------------------------------------
 
 # create pandas dataframe
 @st.experimental_memo(suppress_st_warning=True)
@@ -322,7 +322,7 @@ if uploaded_file is not None:
     else:
         st.title(f'Exploring {title} Dataset')
         st.markdown('''## Successful upload!''')
-        st.markdown('''### Follow these steps to graph your data:
+        st.markdown('''### Follow the steps below to visualize your data:
     1. Check the data types and change any that should be a different type.
     2. Alter the defualt visual settings if desired.
     3. Choose your default variables (all created charts will default to these).
